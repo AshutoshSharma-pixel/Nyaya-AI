@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test AI Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .chat-messages {
+            height: 400px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .user-message {
+            background: #e3f2fd;
+            text-align: right;
+        }
+
+        .ai-message {
+            background: #f5f5f5;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #sendBtn {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #sendBtn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container">
+        <h1>Test AI Dashboard</h1>
+        <div id="chatMessages" class="chat-messages">
+            <div class="message ai-message">Hello! I'm Nyaya AI. How can I help you?</div>
+        </div>
+        <div class="input-container">
+            <input type="text" id="messageInput" placeholder="Type a message...">
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        console.log('Test page loaded');
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM loaded');
+
+            const messageInput = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const chatMessages = document.getElementById('chatMessages');
+
+            console.log('Elements found:', {
+                messageInput: !!messageInput,
+                sendBtn: !!sendBtn,
+                chatMessages: !!chatMessages
+            });
+
+            function addMessage(content, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+                messageDiv.textContent = content;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message) return;
+
+                console.log('Sending message:', message);
+                addMessage(message, true);
+                messageInput.value = '';
+
+                // Simulate AI response
+                setTimeout(() => {
+                    addMessage('I received your message: ' + message);
+                }, 1000);
+            }
+
+            // Event listeners
+            sendBtn.addEventListener('click', function () {
+                console.log('Send button clicked');
+                sendMessage();
+            });
+
+            messageInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    console.log('Enter key pressed');
+                    sendMessage();
+                }
+            });
+
+            console.log('Event listeners attached');
+        });
+    </script>
+</body>
+
+</html>
+
+
+
+
+

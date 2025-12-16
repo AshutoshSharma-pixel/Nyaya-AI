@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nyaya AI - Legal Assistant</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Oswald:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <style>
+        @font-face {
+            font-family: 'Mera Pro';
+            src: url('fonts/MeraPro-Regular.woff2') format('woff2'),
+                url('fonts/MeraPro-Regular.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Mera Pro';
+            src: url('fonts/MeraPro-Bold.woff2') format('woff2'),
+                url('fonts/MeraPro-Bold.woff') format('woff');
+            font-weight: 700;
+            font-style: normal;
+        }
+    </style>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js"></script>
+
+    <!-- Firebase Configuration -->
+    <script src="firebase-config.js"></script>
+    <!-- OpenAI Configuration -->
+    <script src="openai-config.js"></script>
+</head>
+
+<body>
+    <!-- AI Dashboard -->
+    <div class="ai-dashboard active">
+        <div class="ai-container">
+            <!-- Left Sidebar -->
+            <div class="ai-sidebar">
+                <div class="sidebar-header">
+                    <button class="new-chat-btn" id="newChatBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M12 7v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M9 10h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                        New Chat
+                    </button>
+                    <div class="search-chat">
+                        <input type="text" id="searchChat" placeholder="Search chat...">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+                            <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="chat-history" id="chatHistory">
+                    <!-- Chat history will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="ai-main">
+                <!-- Header -->
+                <div class="ai-header">
+                    <div class="ai-logo">
+                        <div class="ai-logo-flag">
+                            <span class="ai-logo-text">AI</span>
+                        </div>
+                        <span class="ai-brand-text">NYAYA</span>
+                    </div>
+                    <div class="ai-nav">
+                        <a href="index.html" class="nav-link">HOME</a>
+                        <a href="#" class="nav-link active">AI BOT</a>
+                        <a href="#" class="nav-link">JOBS</a>
+                        <a href="#" class="nav-link">NETWORKS</a>
+                    </div>
+                    <div class="ai-right">
+                        <div class="ai-top-links">
+                            <a href="#" class="nav-link">CHATS</a>
+                            <a href="#" class="nav-link">NOTIFICATIONS</a>
+                        </div>
+                        <div class="ai-search">
+                            <input type="text" placeholder="Search" class="search-input">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="search-icon">
+                                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+                                <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" />
+                            </svg>
+                        </div>
+                        <div class="user-profile" id="userProfile">
+                            <div class="user-profile-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Chat Messages -->
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai-message">
+                        <div class="message-avatar">
+                            <div class="ai-avatar">AI</div>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-text">Hello! I'm Nyaya AI, your legal assistant. How may I help you
+                                today? You can ask me about any legal matter, and I'll provide guidance based on Indian
+                                law.</div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="chat-input-container">
+                    <div class="chat-input">
+                        <button class="attach-btn" id="attachBtn" title="Attach files">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.64 16.2a2 2 0 0 1-2.83-2.83l8.49-8.49"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                        <input type="text" id="messageInput" placeholder="Type a message...">
+                        <button class="voice-btn" id="voiceBtn" title="Voice input">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" stroke="currentColor"
+                                    stroke-width="2" />
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2" stroke="currentColor" stroke-width="2" />
+                                <line x1="12" y1="19" x2="12" y2="23" stroke="currentColor" stroke-width="2" />
+                                <line x1="8" y1="23" x2="16" y2="23" stroke="currentColor" stroke-width="2" />
+                            </svg>
+                        </button>
+                        <button class="send-btn" id="sendBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <line x1="22" y1="2" x2="11" y2="13" stroke="currentColor" stroke-width="2" />
+                                <polygon points="22,2 15,22 11,13 2,9" stroke="currentColor" stroke-width="2" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="disclaimer">
+                        <small>Disclaimer: This information is for general understanding and guidance. It is not a
+                            substitute for professional legal advice. Please consult a qualified lawyer immediately for
+                            advice specific to your situation.</small>
+                    </div>
+                </div>
+
+                <!-- Pause/Stop Controls (hidden by default) -->
+                <div class="pause-controls" id="pauseControls" style="display: none;">
+                    <button class="pause-btn" id="pauseBtn" title="Pause response">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="6" y="4" width="4" height="16"></rect>
+                            <rect x="14" y="4" width="4" height="16"></rect>
+                        </svg>
+                        Pause
+                    </button>
+                    <button class="stop-btn" id="stopBtn" title="Stop response">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="6" y="6" width="12" height="12"></rect>
+                        </svg>
+                        Stop
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Close Button -->
+        <button class="ai-close-btn" id="closeAiDashboard">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Delete Chat Confirmation Modal -->
+    <div id="deleteModal" class="delete-modal" style="display: none;">
+        <div class="delete-modal-content">
+            <div class="delete-modal-header">
+                <h3>Delete chat</h3>
+            </div>
+            <div class="delete-modal-body">
+                <p>Are you sure you want to delete this chat? This action cannot be undone.</p>
+            </div>
+            <div class="delete-modal-footer">
+                <button class="delete-cancel-btn" onclick="cancelDelete()">Cancel</button>
+                <button class="delete-confirm-btn" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="legal-knowledge-base.js"></script>
+    <script src="ai-dashboard.js"></script>
+</body>
+
+</html>

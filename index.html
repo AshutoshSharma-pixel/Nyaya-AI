@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nyaya - Simplifying Justice</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth-compat.js"></script>
+
+    <!-- Firebase Configuration -->
+    <script src="firebase-config.js"></script>
+    <!-- OpenAI Configuration -->
+    <script src="openai-config.js"></script>
+
+
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-logo">
+            <div class="loading-logo-flag"></div>
+            <span class="loading-brand-text">NYAYA</span>
+        </div>
+    </div>
+
+    <!-- Sign Up Modal -->
+    <div id="signupModal" class="signup-modal">
+        <div class="signup-container">
+            <div class="signup-card">
+                <!-- Logo Section -->
+                <div class="signup-logo">
+                    <div class="signup-logo-flag">
+                        <span class="signup-logo-text">AI</span>
+                    </div>
+                    <span class="signup-brand-text">NYAYA</span>
+                </div>
+
+                <!-- Form Title -->
+                <h2 class="signup-title">Sign up</h2>
+
+                <!-- Sign Up Form -->
+                <form class="signup-form" id="signupForm">
+                    <!-- Email Field -->
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="email" id="email" name="email" class="form-input" required>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="password-container">
+                            <input type="password" id="password" name="password" class="form-input" required>
+                            <button type="button" class="password-toggle" id="passwordToggle">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M9.88 9.88a3 3 0 1 1 4.24 4.24" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path
+                                        d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <line x1="2" y1="2" x2="22" y2="22" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <span class="toggle-text">Hide</span>
+                            </button>
+                        </div>
+                        <p class="password-hint">Use 8 or more characters with a mix of letters, numbers & symbols</p>
+                    </div>
+
+                    <!-- Terms and Privacy Checkbox -->
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="terms" name="terms" class="checkbox-input" required>
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">By clicking on Sign - Up you agree to our <a href="#"
+                                    class="link">Terms Of Use</a> and <a href="#" class="link">Privacy Policy</a></span>
+                        </label>
+                    </div>
+
+                    <!-- Social Login Options -->
+                    <div class="social-login">
+                        <div class="social-icons">
+                            <button type="button" class="social-btn google-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24">
+                                    <path fill="#4285F4"
+                                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                    <path fill="#34A853"
+                                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                    <path fill="#FBBC05"
+                                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                    <path fill="#EA4335"
+                                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                                </svg>
+                            </button>
+                            <button type="button" class="social-btn facebook-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24">
+                                    <path fill="#1877F2"
+                                        d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                </svg>
+                            </button>
+                            <button type="button" class="social-btn apple-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24">
+                                    <path fill="#000000"
+                                        d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Sign - Up</button>
+                        <button type="button" class="btn btn-secondary" id="loginBtn">Login</button>
+                    </div>
+                </form>
+
+                <!-- Close Button -->
+                <button class="close-btn" id="closeSignup">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-container">
+            <div class="login-card">
+                <!-- Logo Section -->
+                <div class="login-logo">
+                    <div class="login-logo-flag">
+                        <span class="login-logo-text">AI</span>
+                    </div>
+                    <span class="login-brand-text">NYAYA</span>
+                </div>
+
+                <!-- Form Title -->
+                <h2 class="login-title">Login</h2>
+
+                <!-- Login Form -->
+                <form class="login-form" id="loginForm">
+                    <!-- Email Field -->
+                    <div class="form-group">
+                        <label for="loginEmail" class="form-label">Email address</label>
+                        <input type="email" id="loginEmail" name="email" class="form-input" required>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <label for="loginPassword" class="form-label">Password</label>
+                        <div class="password-container">
+                            <input type="password" id="loginPassword" name="password" class="form-input" required>
+                            <button type="button" class="password-toggle" id="loginPasswordToggle">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M9.88 9.88a3 3 0 1 1 4.24 4.24" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path
+                                        d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <line x1="2" y1="2" x2="22" y2="22" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <span class="toggle-text">Hide</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="login-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe" name="rememberMe" class="checkbox-input">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+
+                    <!-- Social Login Options -->
+                    <div class="social-login">
+                        <div class="social-icons">
+                            <button type="button" class="social-btn google-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24">
+                                    <path fill="#4285F4"
+                                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                    <path fill="#34A853"
+                                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                    <path fill="#FBBC05"
+                                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                    <path fill="#EA4335"
+                                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                                </svg>
+                            </button>
+                            <button type="button" class="social-btn facebook-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24">
+                                    <path fill="#1877F2"
+                                        d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                </svg>
+                            </button>
+                            <button type="button" class="social-btn apple-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24">
+                                    <path fill="#000000"
+                                        d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <button type="button" class="btn btn-secondary" id="signupBtnInModal">Sign Up</button>
+                    </div>
+                </form>
+
+                <!-- Close Button -->
+                <button class="close-btn" id="closeLogin">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Dashboard Modal -->
+    <div id="aiDashboard" class="ai-dashboard">
+        <div class="ai-container">
+            <!-- Left Sidebar -->
+            <div class="ai-sidebar">
+                <div class="sidebar-header">
+                    <button class="new-chat-btn" id="newChatBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M12 7v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M9 10h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                        New Chat
+                    </button>
+                    <div class="search-chat">
+                        <input type="text" id="searchChat" placeholder="Search chat...">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+                            <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="chat-history" id="chatHistory">
+                    <div class="history-item active">
+                        <div class="history-preview">Murder Case Discussion</div>
+                        <div class="history-time">2 min ago</div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-preview">Property Dispute Query</div>
+                        <div class="history-time">1 hour ago</div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-preview">Contract Review</div>
+                        <div class="history-time">3 hours ago</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <div class="ai-main">
+                <!-- Header -->
+                <div class="ai-header">
+                    <div class="ai-logo">
+                        <div class="ai-logo-flag">
+                            <span class="ai-logo-text">AI</span>
+                        </div>
+                        <span class="ai-brand-text">NYAYA</span>
+                    </div>
+                    <div class="ai-nav">
+                        <a href="#" class="nav-link">HOME</a>
+                        <a href="#" class="nav-link active">AI BOT</a>
+                        <a href="#" class="nav-link">JOBS</a>
+                        <a href="#" class="nav-link">NETWORKS</a>
+                    </div>
+                    <div class="ai-user-section">
+                        <a href="#" class="nav-link">CHATS</a>
+                        <a href="#" class="nav-link">NOTIFICATIONS</a>
+                        <div class="user-profile" id="userProfile">
+                            <img src="https://via.placeholder.com/32x32/000000/ffffff?text=U" alt="User"
+                                class="profile-img">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="ai-search">
+                    <div class="search-container">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+                            <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                        <input type="text" id="aiSearch" placeholder="Search">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" />
+                            <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" />
+                            <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" />
+                            <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai-message">
+                        <div class="message-avatar">
+                            <div class="ai-avatar">AI</div>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-text">Hello! I'm Nyaya AI, your legal assistant. How may I help you
+                                today? You can ask me about any legal matter, and I'll provide guidance based on Indian
+                                law.</div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="chat-input-container">
+                    <div class="chat-input">
+                        <button class="attach-btn" id="attachBtn" title="Attach files">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.64 16.2a2 2 0 0 1-2.83-2.83l8.49-8.49"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                        <input type="text" id="messageInput" placeholder="Type a message...">
+                        <button class="voice-btn" id="voiceBtn" title="Voice input">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" stroke="currentColor"
+                                    stroke-width="2" />
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2" stroke="currentColor" stroke-width="2" />
+                                <line x1="12" y1="19" x2="12" y2="23" stroke="currentColor" stroke-width="2" />
+                                <line x1="8" y1="23" x2="16" y2="23" stroke="currentColor" stroke-width="2" />
+                            </svg>
+                        </button>
+                        <button class="send-btn" id="sendBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <line x1="22" y1="2" x2="11" y2="13" stroke="currentColor" stroke-width="2" />
+                                <polygon points="22,2 15,22 11,13 2,9" stroke="currentColor" stroke-width="2" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="disclaimer">
+                        <small>Disclaimer: This information is for general understanding and guidance. It is not a
+                            substitute for professional legal advice. Please consult a qualified lawyer immediately for
+                            advice specific to your situation.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Close Button -->
+        <button class="ai-close-btn" id="closeAiDashboard">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="header-nav">
+        <div class="nav-container">
+            <div class="nav-buttons">
+                <button class="nav-login-btn">LOGIN</button>
+                <button class="nav-signup-btn">SIGN UP</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <!-- Logo Section -->
+            <div class="logo-container">
+                <div class="logo-flag">
+                    <span class="logo-text">AI</span>
+                </div>
+            </div>
+
+            <!-- Brand Name -->
+            <h1 class="brand-name">NYAYA</h1>
+
+            <!-- Tagline -->
+            <p class="tagline">Simplifying Justice</p>
+
+            <!-- CTA Button -->
+            <button class="cta-button" id="ctaButton">
+                <span class="button-text">Get Started</span>
+                <span class="arrow">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </span>
+            </button>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator">
+            <div class="scroll-text">Scroll to see more</div>
+            <div class="scroll-arrow">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 5V19M12 19L19 12M12 19L5 12" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Section -->
+    <section class="main-content">
+        <div class="container">
+            <!-- Main Headline -->
+            <h2 class="main-headline">Describe Your Legal Problems. We'll Break It Down, Tell You What Law Applies, And
+                Connect You To Trusted Lawyers</h2>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="primary-button" id="tryAiButton">
+                    <span>Try AI</span>
+                    <span class="arrow">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                </button>
+                <button class="secondary-button">
+                    <span>Join As A Lawyer</span>
+                    <span class="arrow">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                </button>
+            </div>
+
+            <!-- How It Works Section -->
+            <div class="how-it-works">
+                <h3 class="section-title">
+                    How It Works
+                    <span class="star-icon">✦</span>
+                </h3>
+
+                <div class="cards-container">
+                    <!-- Card 1 -->
+                    <div class="feature-card">
+                        <div class="card-icon">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                <path
+                                    d="M8 8h24v20H8V8zm2 2v16h20V10H10zm2 2h16v2H12v-2zm0 4h16v2H12v-2zm0 4h12v2H12v-2z"
+                                    fill="currentColor" />
+                            </svg>
+                        </div>
+                        <h4 class="card-title">Ask Your Question</h4>
+                        <p class="card-description">"My Wife Threatening Me With A False Dowry Case."</p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="feature-card">
+                        <div class="card-icon">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                <text x="20" y="28" text-anchor="middle" font-family="Arial, sans-serif" font-size="20"
+                                    font-weight="bold" fill="currentColor">AI</text>
+                                <circle cx="30" cy="10" r="4" fill="currentColor" />
+                            </svg>
+                        </div>
+                        <h4 class="card-title">AI Analyses Your Issue</h4>
+                        <p class="card-description">"Shows IPC Sections And All The Possible Legal Options."</p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="feature-card">
+                        <div class="card-icon">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                <path d="M20 4L24 16L36 16L26 24L30 36L20 28L10 36L14 24L4 16L16 16L20 4Z"
+                                    fill="currentColor" />
+                                <path d="M20 8L22 14L28 14L23 18L25 24L20 20L15 24L17 18L12 14L18 14L20 8Z"
+                                    fill="currentColor" />
+                            </svg>
+                        </div>
+                        <h4 class="card-title">Connect With Lawyers</h4>
+                        <p class="card-description">"Find Lawyers For The Particular Type Of Case In Your Area."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="features-title">WHAT SETS US APART FROM OTHER AI PLATFORMS</h2>
+
+            <div class="features-grid">
+                <!-- Feature 1 -->
+                <div class="feature-box">
+                    <h3 class="feature-title">AI Legal Advisor</h3>
+                    <p class="feature-description">Understands Real - World Complex Legal Issues</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-box">
+                    <h3 class="feature-title">Indian Law Focused</h3>
+                    <p class="feature-description">Trained Using IPC, CRPC And Actual Court Judgements.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-box">
+                    <h3 class="feature-title">Verified Lawyers</h3>
+                    <p class="feature-description">Filter By Win - Rate, Fees, Language, Location.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-box">
+                    <h3 class="feature-title">User Friendly</h3>
+                    <p class="feature-description">Designed For Common Users, No Prior Legal Knowledge Needed.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-box">
+                    <h3 class="feature-title">Lawyer Profiles</h3>
+                    <p class="feature-description">First Platform For Lawyers To Show There Work Online.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-box">
+                    <h3 class="feature-title">Location Oriented</h3>
+                    <p class="feature-description">Find Best Lawyer For Your Particular Type Of Case In Your Area.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer-section">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h4 class="footer-title">Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">AI Legal Advisor</a></li>
+                        <li><a href="#">Lawyer Search</a></li>
+                        <li><a href="#">Case Analysis</a></li>
+                        <li><a href="#">Legal Resources</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4 class="footer-title">Information</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Help Center</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4 class="footer-title">Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h4 class="footer-title">Subscribe</h4>
+                    <div class="subscribe-form">
+                        <input type="email" placeholder="Email address" class="email-input">
+                        <button class="subscribe-button">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="footer-quote">"Nyaya AI is building India's first transparent legal assistance platform —
+                        for everyone."</p>
+                </div>
+            </div>
+
+            <!-- Footer Logo Section -->
+            <div class="footer-logo-section">
+                <div class="footer-logo">
+                    <div class="footer-logo-flag">
+                        <span class="footer-logo-text">AI</span>
+                    </div>
+                    <span class="footer-brand-text">NYAYA</span>
+                </div>
+            </div>
+
+            <!-- Copyright Section -->
+            <div class="copyright-section">
+                <p class="copyright-text">&copy; 2025 Nyaya AI. All rights reserved. | Simplifying Justice for Everyone
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
