@@ -165,6 +165,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Throttled scroll handler
+    // Helper to format basic markdown to HTML
+    function formatMessage(text) {
+        let formatted = text
+            // Headers (### Header)
+            .replace(/^### (.*$)/gim, '<h3 class="font-bold text-lg mt-3 mb-1 text-nyaya-blue">$1</h3>')
+            // Bold (**text**)
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            // Italic (*text*)
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            // List items (- item)
+            .replace(/^- (.*$)/gim, '<li class="ml-4 list-disc">$1</li>')
+            // Lawyer Blockquotes (> text)
+            .replace(/^> (.*$)/gim, '<div class="pl-3 border-l-4 border-nyaya-orange ml-2 my-1 text-gray-700 bg-orange-50 p-1">$1</div>')
+            // Line breaks
+            .replace(/\n/g, '<br>');
+        return formatted;
+    }
     let ticking = false;
     function requestTick() {
         if (!ticking) {
@@ -1181,7 +1198,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const messageText = document.createElement('div');
         messageText.className = 'message-text';
-        messageText.textContent = content;
+        if (!isUser && typeof formatMessage === 'function') {
+            messageText.innerHTML = formatMessage(content);
+        } else {
+            messageText.textContent = content;
+        }
 
         const messageTime = document.createElement('div');
         messageTime.className = 'message-time';

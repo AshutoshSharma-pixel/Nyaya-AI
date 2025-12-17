@@ -2504,23 +2504,18 @@ body::before {
     text-align: left;
 }
 
-/* Typing indicator */
+/* Typing indicator animation removed as per user request */
 .message.typing .message-text {
-    animation: typing 1.5s infinite;
+    /* animation: typing 1.5s infinite; */
+    opacity: 1;
 }
 
+/* 
 @keyframes typing {
-
-    0%,
-    60%,
-    100% {
-        opacity: 0.3;
-    }
-
-    30% {
-        opacity: 1;
-    }
-}
+    0%, 60%, 100% { opacity: 0.3; }
+    30% { opacity: 1; }
+} 
+*/
 
 /* Chat Input */
 .chat-input-container {
